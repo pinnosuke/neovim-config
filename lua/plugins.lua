@@ -4,10 +4,12 @@ vim.cmd('packadd vim-jetpack')
 require('jetpack.packer').add {
   {'tani/vim-jetpack', opt = 1},
 
-  -- library
+  -- library: {{{
   {'nvim-lua/plenary.nvim'},
   {'nvim-tree/nvim-web-devicons'},
   {'vim-denops/denops.vim'},
+  {'tpope/vim-repeat'},
+  -- }}}
 
   -- lsp {{{
   {
@@ -44,6 +46,17 @@ require('jetpack.packer').add {
       vim.keymap.set('n', '[lsp]h', '<CMD>lua vim.lsp.buf.hover()<CR>')
       vim.keymap.set('n', '[lsp]x', '<CMD>lua vim.lsp.buf.format()<CR>')
     end,
+    config = function()
+      require('lspconfig').lua_ls.setup({
+        settings = {
+          Lua = {
+            diagnostics = {
+              globals = {'vim'}
+            },
+          },
+        }
+      })
+    end,
   },
   -- }}}
 
@@ -69,6 +82,7 @@ require('jetpack.packer').add {
         sources = {
           null_ls.builtins.formatting.isort,
           null_ls.builtins.formatting.goimports,
+          null_ls.builtins.formatting.prettier,
         },
       })
     end,
@@ -288,9 +302,19 @@ require('jetpack.packer').add {
   },
   -- }}}
 
+  -- motion {{{
   {
-    'ggandor/lightspeed.nvim',
+    'phaazon/hop.nvim',
+    config = function()
+      require('hop').setup({})
+      vim.keymap.set('n', '[hop]', '<NOP>')
+      vim.keymap.set('n', '<Leader>h', '[hop]', {remap = true})
+      vim.keymap.set('n', '[hop]w', '<CMD>HopWord<CR>')
+      vim.keymap.set('n', '[hop]s', '<CMD>HopPattern<CR>')
+      vim.keymap.set('n', '[hop]d', '<CMD>HopChar2<CR>')
+    end,
   },
+  --- }}}
 
   -- treesitter {{{
   {
@@ -315,6 +339,7 @@ require('jetpack.packer').add {
   },
   -- }}}
 
+  -- editing: {{{
   {
     'numToStr/Comment.nvim',
     config = function()
@@ -330,6 +355,7 @@ require('jetpack.packer').add {
       require("nvim-autopairs").setup({})
     end,
   },
+  -- }}}
 
   -- color {{{
   {
@@ -356,7 +382,9 @@ require('jetpack.packer').add {
       vim.keymap.set('n', '[git]g', '<CMD>Neogit<CR>')
     end,
     config = function()
-      require('neogit').setup({})
+      require('neogit').setup({
+        disable_commit_confirmation = true,
+      })
     end,
   },
   -- }}}
@@ -374,7 +402,8 @@ require('jetpack.packer').add {
           end
         end,
         open_mapping = [[<c-\><c-\>]],
-        direction = 'vertical',
+        persist_size = false,
+        direction = 'horizontal',
       })
     end,
   },
@@ -413,6 +442,10 @@ require('jetpack.packer').add {
   },
   -- }}}
 
+  -- colorscheme: {{{
   { "mhartington/oceanic-next" }
+  -- }}}
 
 }
+
+-- vim: foldmethod=marker
